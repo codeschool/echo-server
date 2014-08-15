@@ -4,6 +4,14 @@ require 'memcachier'
 
 set :cache, Dalli::Client.new
 
+if ENV['MEMCACHEDCLOUD_PASSWORD'] && ENV['MEMCACHEDCLOUD_SERVERS'] && ENV['MEMCACHEDCLOUD_USERNAME']
+  set :cache, Dalli::Client.new(ENV["MEMCACHEDCLOUD_SERVERS"],
+    {:username => ENV["MEMCACHEDCLOUD_USERNAME"], :password => ENV["MEMCACHEDCLOUD_PASSWORD"]}
+  )
+else
+  set :cache, Dalli::Client.new
+end
+
 get '/:id' do
   result = settings.cache.get(params[:id])
 
